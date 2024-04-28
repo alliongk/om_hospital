@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+        <!-- hospital.appointment tree view -->
+        <record id="hospital_appointment_view_tree" model="ir.ui.view">
+            <field name="name">hospital.appointment.view.tree</field>
+            <field name="model">hospital.appointment</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="patient_id"/>
+                    <field name="appointment_time"/>
+                    <field name="booking_date"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- hospital.appointment form view -->
+        <record id="hospital_appointment_view_form" model="ir.ui.view">
+            <field name="name">hospital.appointment.view.form</field>
+            <field name="model">hospital.appointment</field>
+            <field name="arch" type="xml">
+                <form string="">
+                    <sheet>
+                        <group>
+                            <group>
+                                <!-- Add your fields here -->
+                                <field name="patient_id"/>
+                                <field name="booking_date"/>
+                            </group>
+                            <group>
+                                <field name="appointment_time"/>
+                            </group>
+                        </group>
+                    </sheet>
+                    <!-- chatter -->
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="activity_ids" widget="mail_activity"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <!-- hospital.appointment filter search -->
+        <record id="hospital_appointment_view_search" model="ir.ui.view">
+            <field name="name">hospital.appointment.view.search</field>
+            <field name="model">hospital.appointment</field>
+            <field name="arch" type="xml">
+                <search>
+                    <!-- Add your fields here -->
+                    <group>
+                    </group>
+                    <searchpanel>
+                    </searchpanel>
+
+                </search>
+            </field>
+        </record>
+
+        <!-- hospital.appointment action window -->
+        <record id="hospital_appointment_action" model="ir.actions.act_window">
+            <field name="name">Appointment</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hospital.appointment</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{}</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    <!-- Add Text Here -->
+                </p><p>
+                    <!-- More details about what a user can do with this object will be OK --> 
+                    Create your first appointment !
+                </p>
+            </field>
+        </record>
+
+        <!-- This Menu Item Must have a parent -->
+        <menuitem id="appointment_menu_categ" name="Appointment" action="hospital_appointment_action" parent="hospital_menu_root" sequence="0"/>
+
+</odoo>
