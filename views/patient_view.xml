@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+        <!-- hospital.patient tree view -->
+        <record id="hospital_patient_view_tree" model="ir.ui.view">
+            <field name="name">hospital.patient.view.tree</field>
+            <field name="model">hospital.patient</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <!-- Add your fields here -->
+                    <field name="name" string="Patient Name"/>
+                    <field name="ref"/>
+                    <field name="age"/>
+                    <field name="gender"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- hospital.patient form view -->
+        <record id="hospital_patient_view_form" model="ir.ui.view">
+            <field name="name">hospital.patient.view.form</field>
+            <field name="model">hospital.patient</field>
+            <field name="arch" type="xml">
+                <form string="">
+                    <sheet>
+                        <group>
+                            <!-- Add your fields here -->
+                            <group>
+                                <field name="name"/>
+                                <field name="age"/>
+                            </group>
+                            <group>
+                                <field name="ref"/>
+                                <field name="gender"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="hospital_patient_view_search" model="ir.ui.view">
+            <field name="name">hospital.patient.view.search</field>
+            <field name="model">hospital.patient</field>
+            <field name="arch" type="xml">
+                <search>
+                    <!-- Add your fields here -->
+                    <field name="name" string="Patient Name" filter_domain="['|', ('name', 'ilike', self), ('ref', 'ilike', self)]" />
+                    <field name="ref"/>
+                    <field name="age"/>
+                    <field name="gender"/>
+                </search>
+            </field>
+        </record>
+
+        <!-- hospital.patient action window -->
+        <record id="hospital_patient_action" model="ir.actions.act_window">
+            <field name="name">Patient</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hospital.patient</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    <!-- Add Text Here -->
+                </p><p>
+                    <!-- More details about what a user can do with this object will be OK --> 
+                    Create your first patient !
+                </p>
+            </field>
+        </record>
+
+        <!-- This Menu Item Must have a parent -->
+        <menuitem id="patient_menu_categ" name="Patient" action="hospital_patient_action" parent="patient_master_menu_categ" sequence="0"/>
+
+</odoo>
