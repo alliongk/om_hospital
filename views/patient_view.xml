@@ -26,7 +26,9 @@
                             <!-- Add your fields here -->
                             <group>
                                 <field name="name"/>
+                                <field name="date_of_birth"/>
                                 <field name="age"/>
+                                <field name="appointment_id"/>
                             </group>
                             <group>
                                 <field name="ref"/>
@@ -59,7 +61,7 @@
                     <filter name="filter_male" string="Male" domain="[('gender', '=', 'male')]"/>
                     <filter name="filter_female" string="Female" domain="[('gender', '=', 'female')]"/>
                     <separator/>
-                    <filter name="filter_kids" string="Kids" domain="[('age', '&lt;=', 5)]"/>
+                    <!-- <filter name="filter_kids" string="Kids" domain="[('age', '&lt;=', 5)]"/> -->
                     <separator/>
                     <filter name="filter_archived" string="Archived" domain="[('active', '=', False)]"/>
                     <group>

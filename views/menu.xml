@@ -6,5 +6,8 @@
 
         <!-- This Menu Item Must have a parent -->
         <menuitem id="patient_master_menu_categ" name="Patient Details" parent="hospital_menu_root" sequence="0"/>
+       
+        <!-- This Menu Item Must have a parent -->
+        <menuitem id="appointment_master_menu_categ" name="Appointment" parent="hospital_menu_root" sequence="0"/>
 
 </odoo>

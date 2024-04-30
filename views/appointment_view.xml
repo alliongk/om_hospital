@@ -24,6 +24,8 @@
                             <group>
                                 <!-- Add your fields here -->
                                 <field name="patient_id"/>
+                                <field name="ref"/>
+                                <field name="gender"/>
                                 <field name="booking_date"/>
                             </group>
                             <group>
@@ -75,6 +77,6 @@
         </record>
 
         <!-- This Menu Item Must have a parent -->
-        <menuitem id="appointment_menu_categ" name="Appointment" action="hospital_appointment_action" parent="hospital_menu_root" sequence="0"/>
+        <menuitem id="appointment_menu_categ" name="Appointment" action="hospital_appointment_action" parent="appointment_master_menu_categ" sequence="0"/>
 
 </odoo>
