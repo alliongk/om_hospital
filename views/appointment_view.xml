@@ -5,10 +5,23 @@
             <field name="name">hospital.appointment.view.tree</field>
             <field name="model">hospital.appointment</field>
             <field name="arch" type="xml">
-                <tree>
+                <tree decoration-success="state == 'done'"
+                    decoration-info="state == 'draft'"
+                    decoration-danger="state == 'cancel'"
+                    decoration-warning="state == 'in_consultation'">
                     <field name="patient_id"/>
+                    <field name="ref" optional="show"/>
+                    <field name="gender" optional="hide"/>
+                    <field name="doctor_id" widget="many2one_avatar"/>
                     <field name="appointment_time"/>
-                    <field name="booking_date"/>
+                    <field name="booking_date" optional="show"/>
+                    <field name="activity_ids" widget="list_activity"/>
+                    <field name="state" 
+                            decoration-success="state == 'done'"
+                            decoration-info="state == 'draft'"
+                            decoration-danger="state == 'cancel'"
+                            decoration-warning="state == 'in_consultation'"
+                            widget="badge"/>
                 </tree>
             </field>
         </record>
@@ -18,20 +31,40 @@
             <field name="name">hospital.appointment.view.form</field>
             <field name="model">hospital.appointment</field>
             <field name="arch" type="xml">
-                <form string="">
+                <form crete="0" delete="0" edit="0">
+                    <header>
+                        <field name="state" widget="statusbar" nolabel="1" options="{'clickable': '1'}" statusbar_visible="draft,in_consultation,done"/>
+                    </header>
                     <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="priority" widget="priority" class="mr-3"/>
+                            </h1>
+                        </div>
                         <group>
                             <group>
                                 <!-- Add your fields here -->
                                 <field name="patient_id"/>
                                 <field name="ref"/>
                                 <field name="gender"/>
-                                <field name="booking_date"/>
+                                <field name="doctor_id" widget="many2one_avatar"/>
+                                <field name="booking_date" help="Booking of Date"/>
                             </group>
                             <group>
                                 <field name="appointment_time"/>
+                                <button name="action_test" string="Object Button" help="A message" confirm="Are you sure executive action?" type="object" class="oe_highlight"/>
+                                <button name="%(om_hospital.hospital_appointment_action)d" string="Action Button" help="On click button" confirm="Are you sure open patient action?" type="action" class="oe_highlight"/>
                             </group>
                         </group>
+
+                        <notebook>
+                            <page name="Prescription" string="prescription">
+                                <field name="prescription" placeholder="Enter your prescription" options="{'collaborative': true}"/>
+                            </page>
+                            <page name="Pharmacy" string="pharmacy">
+                                
+                            </page>
+                        </notebook>
                     </sheet>
                     <!-- chatter -->
                     <div class="oe_chatter">
