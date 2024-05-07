@@ -16,7 +16,10 @@ class HospitalAppointment(models.Model):
     prescription = fields.Html(string='Prescription')
     priority = fields.Selection([('0', 'Normal'), ('1', 'Low'), ('2', 'High'), ('3', 'Very High'),], string="Priority")
     state = fields.Selection([('draft', 'Draft'), ('in_consultation', 'In Consultation'), ('done', 'Done'), ('cancel', 'Cancelled'),], default="draft", required=True, string="Status")
-    doctor_id = fields.Many2one(comodel_name='res.users', string='Doctor')
+    doctor_id = fields.Many2one(comodel_name='res.users', string='Doctor', tracking=True)
+    pharmacy_line_ids = fields.One2many(comodel_name='appointment.pharmacy.lines', inverse_name='appointment_id', string='Pharmacy Lines')
+    hide_sales_price = fields.Boolean(string='Hide Sales Price')
+    
     
    
     @api.onchange('patient_id')
@@ -33,3 +36,34 @@ class HospitalAppointment(models.Model):
             }
         }
     
+    def action_in_consultation(self):
+        for rec in self:
+            rec.state = 'in_consultation'
+
+    def action_draft(self):
+        for rec in self:
+            rec.state = 'draft'
+
+    def action_cancel(self):
+        action = self.env.ref('om_hospital.cancel_appointment_wizard_action').read()[0]
+        return action
+
+    def action_done(self):
+        for rec in self:
+            rec.state = 'done'
+
+
+
+class AppointmentPharmacyLines(models.Model):
+    _name = 'appointment.pharmacy.lines'
+    _description = 'Appointment Pharmacy Lines'
+
+    product_id = fields.Many2one('product.product', required=True)
+    price_unit = fields.Float(related='product_id.list_price')
+    qty = fields.Integer(string='Quantity', default="1")
+    appointment_id = fields.Many2one(comodel_name='hospital.appointment', string='Appointment')
+    
+    
+    
+    
+
