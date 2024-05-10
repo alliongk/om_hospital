@@ -1,7 +1,5 @@
 from odoo import models, fields, api
 
-
-
 class HospitalAppointment(models.Model):
     _name = 'hospital.appointment'
     _inherit = ["mail.thread", "mail.activity.mixin"]
@@ -20,8 +18,6 @@ class HospitalAppointment(models.Model):
     pharmacy_line_ids = fields.One2many(comodel_name='appointment.pharmacy.lines', inverse_name='appointment_id', string='Pharmacy Lines')
     hide_sales_price = fields.Boolean(string='Hide Sales Price')
     
-    
-   
     @api.onchange('patient_id')
     def onchange_patient_id(self):
         self.ref = self.patient_id.ref
@@ -53,7 +49,6 @@ class HospitalAppointment(models.Model):
             rec.state = 'done'
 
 
-
 class AppointmentPharmacyLines(models.Model):
     _name = 'appointment.pharmacy.lines'
     _description = 'Appointment Pharmacy Lines'
@@ -62,8 +57,3 @@ class AppointmentPharmacyLines(models.Model):
     price_unit = fields.Float(related='product_id.list_price')
     qty = fields.Integer(string='Quantity', default="1")
     appointment_id = fields.Many2one(comodel_name='hospital.appointment', string='Appointment')
-    
-    
-    
-    
-
