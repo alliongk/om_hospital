@@ -15,5 +15,5 @@
        
         <!-- This Menu Item Must have a parent -->
         <menuitem id="cancel_appointment_master_menu_categ" name="Cancellation" action="cancel_appointment_wizard_action" parent="appointment_master_menu_categ" sequence="20"/>
-
+        
 </odoo>
