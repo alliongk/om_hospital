@@ -18,6 +18,8 @@ class HospitalAppointment(models.Model):
     doctor_id = fields.Many2one(comodel_name='res.users', string='Doctor', tracking=True)
     pharmacy_line_ids = fields.One2many(comodel_name='appointment.pharmacy.lines', inverse_name='appointment_id', string='Pharmacy Lines')
     hide_sales_price = fields.Boolean(string='Hide Sales Price')
+    operation_ids = fields.One2many(comodel_name='hospital.operation', inverse_name='doctor_id', string='Operation')
+        
     
     @api.model
     def unlink(self):
