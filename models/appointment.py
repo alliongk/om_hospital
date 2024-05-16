@@ -1,3 +1,4 @@
+import random
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 
@@ -6,6 +7,7 @@ class HospitalAppointment(models.Model):
     _inherit = ["mail.thread", "mail.activity.mixin"]
     _description = 'Hospital Appointment'
     _rec_name = 'ref'
+    _order = 'id desc'
 
     patient_id = fields.Many2one(comodel_name='hospital.patient', string='Patient', ondelete="cascade")
     gender = fields.Selection(related="patient_id.gender")
@@ -18,8 +20,12 @@ class HospitalAppointment(models.Model):
     doctor_id = fields.Many2one(comodel_name='res.users', string='Doctor', tracking=True)
     pharmacy_line_ids = fields.One2many(comodel_name='appointment.pharmacy.lines', inverse_name='appointment_id', string='Pharmacy Lines')
     hide_sales_price = fields.Boolean(string='Hide Sales Price')
-    operation_ids = fields.One2many(comodel_name='hospital.operation', inverse_name='doctor_id', string='Operation')
-        
+    operation_id = fields.Many2one(comodel_name='hospital.operation', string='Operation')
+    progress = fields.Integer(string="Progress", compute='_compute_progress')   
+    duration = fields.Float(string='Duration')
+    company_id = fields.Many2one('res.company', string='Company', default=lambda self: self.env.company)
+    currency_id = fields.Many2one('res.currency', related='company_id.currency_id')
+            
     
     @api.model
     def unlink(self):
@@ -51,6 +57,20 @@ class HospitalAppointment(models.Model):
         for rec in self:
             rec.state = 'draft'
 
+    @api.depends('state')
+    def _compute_progress(self):
+        for rec in self:
+            if rec.state == 'draft':
+                progress = random.randrange(0, 25)
+            elif rec.state == 'in_consultation':
+                progress = random.randrange(25, 99)
+            elif rec.state == 'done':
+                progress = 100
+            else:
+                progress = 0
+            rec.progress = progress
+
+
     def action_cancel(self):
         action = self.env.ref('om_hospital.cancel_appointment_wizard_action').read()[0]
         return action
@@ -68,3 +88,11 @@ class AppointmentPharmacyLines(models.Model):
     price_unit = fields.Float(related='product_id.list_price')
     qty = fields.Integer(string='Quantity', default="1")
     appointment_id = fields.Many2one(comodel_name='hospital.appointment', string='Appointment')
+    currency_id = fields.Many2one('res.currency', related='appointment_id.currency_id')
+    price_subtotal = fields.Monetary(string='Subtotal', compute="_compute_price_subtotal", 
+                    currency_field="currency_id")
+
+    @api.depends('price_unit', 'qty')
+    def _compute_price_subtotal(self):
+        for rec in self:
+            rec.price_subtotal = rec.price_unit * rec.qty

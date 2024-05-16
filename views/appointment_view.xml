@@ -1,5 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+
+        <record id="action_mark_as_done" model="ir.actions.server">
+            <field name="name">Mark as Done</field>
+            <field name="type">ir.actions.server</field>
+            <field name="model_id" ref="model_hospital_appointment" />
+            <field name="binding_model_id" ref="model_hospital_appointment" />
+            <field name="binding_view_types">list</field>
+            <field name="state">code</field>
+            <field name="code">
+                for record in records:
+                    if records.state == 'in_consultation':
+                        record.action_done()
+            </field>
+        </record>
+
         <record id="hospital_appointment_view_activity" model="ir.ui.view">
             <field name="name">hospital.appointment.view.activity</field>
             <field name="model">hospital.appointment</field>
@@ -16,6 +31,19 @@
                         </div>
                     </templates>
                 </activity>
+            </field>
+        </record>
+
+        <!-- hospital.appointment calendar view -->
+        <record id="hospital_appointment_view_calendar" model="ir.ui.view">
+            <field name="name">hospital.appointment.view.calendar</field>
+            <field name="model">hospital.appointment</field>
+            <field name="arch" type="xml">
+                <calendar string="Appointments" date_start="booking_date" mode="month" date_delay="duration" color="state" quick_add="False" hide_time="True" event_open_popup="True" form_view_id="%(om_hospital.hospital_appointment_view_form)d" event_limit="5">
+                    <!-- Add your fields here -->
+                    <field name="patient_id" filters="1" avatar_field="image"/>
+                    <field name="state" invisible="1" filters="1"/>
+                </calendar>
             </field>
         </record>
 
@@ -47,6 +75,7 @@
                         <button name="action_test" string="Click Me" type="object" class="oe_highlight"/>
                         <button name="edit" string="Edit" type="edit"/>
                     </groupby>
+                    <field name="progress" widget="progressbar"/>
                 </tree>
             </field>
         </record>
@@ -81,26 +110,38 @@
                                 <field name="gender"/>
                                 <field name="doctor_id" widget="many2one_avatar"/>
                                 <field name="booking_date" help="Booking of Date" default_focus="1"/>
-                                <field name="operation_ids"/>
+                                <field name="duration"/>
+                                <field name="operation_id"/>
                             </group>
                             <group>
                                 <field name="hide_sales_price"/>
                                 <field name="appointment_time"/>
+                                <field name="company_id" groups="base.group_multi_company"/>
+                                <field name="currency_id" groups="base.group_multi_currency"/>
                                 <button name="action_test" string="Object Button" help="A message" confirm="Are you sure executive action?" groups="base.group_no_one" type="object" class="oe_highlight"/>
                                 <button name="%(om_hospital.hospital_appointment_action)d" string="Action Button" help="On click button" confirm="Are you sure open patient action?" groups="base.group_no_one" type="action" class="oe_highlight"/>
                             </group>
                         </group>
 
                         <notebook>
-                            <page name="Prescription" string="prescription">
+                            <page name="progress" string="Progress">
+                                <field name="progress" widget="percentpie"/>
+                            </page>
+                            <!-- <page name="progress" string="Progress">
+                                <field name="progress" widget="gauge"/>
+                            </page> -->
+                            <page name="prescription" string="Prescription">
                                 <field name="prescription" placeholder="Enter your prescription" options="{'collaborative':true, 'resizable':true, 'codeview':true}"/>
                             </page>
                             <page name="Pharmacy" string="pharmacy">
                                 <field name="pharmacy_line_ids">
                                     <tree editable="top">
                                         <field name="product_id"/>
-                                        <field name="price_unit" attrs="{'column_invisible': [('parent.hide_sales_price', '=', True)]}"/>
+                                        <field name="price_unit" widget="monetary" 
+                                        options="{'currency_field': 'currency_id'}" attrs="{'column_invisible': [('parent.hide_sales_price', '=', True)]}"/>
                                         <field name="qty"/>
+                                        <field name="currency_id" invisible="1"/>
+                                        <field name="price_subtotal"/>
                                     </tree>
                                     <form>
                                         <group>
@@ -144,7 +185,7 @@
             <field name="name">Appointment</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">hospital.appointment</field>
-            <field name="view_mode">tree,form,activity</field>
+            <field name="view_mode">tree,form,calendar,activity</field>
             <field name="context">{}</field>
             <field name="help" type="html">
                 <p class="oe_view_nocontent_create">

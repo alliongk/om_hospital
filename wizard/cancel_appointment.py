@@ -28,7 +28,10 @@ class CancelAppointmentWizard(models.TransientModel):
         if allowed_date < date.today():
             raise ValidationError(_("Sorry, cancellation is not allowed for this booking!!"))
         self.appointment_id.state = 'cancel'
-
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'reload',
+        }
 
 
     # def action_cancel(self):

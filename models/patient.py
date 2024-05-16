@@ -18,20 +18,46 @@ class HospitalPatient(models.Model):
     appointment_id = fields.Many2one(comodel_name='hospital.appointment', string='Appointment')
     image = fields.Image('image')
     tag_ids = fields.Many2many(comodel_name='patient.tag', string='Tags')
-    appointment_count = fields.Integer(string='Appointment Count', compute="_compute_appointment_count", store=True)
-    appointment_ids = fields.One2many('hospital.appointment', 'patient_id', string='Appointments')
     parent = fields.Char(string='Parent')
     marital_status = fields.Selection(string='Marital Status', selection=[('married', 'Married'), ('single', 'Single'),], tracking=True)
     partner_name = fields.Char(string='Partner Name')
-    
-    
+    is_birthday = fields.Boolean(string='Birthday ?', compute="_compute_is_birthday", store=True)
+    phone = fields.Char('Phone')
+    email = fields.Char('Email')
+    website = fields.Char('Website')
 
+    appointment_count = fields.Integer(string='Appointment Count', compute="_compute_appointment_count", store=True)
+    appointment_ids = fields.One2many('hospital.appointment', 'patient_id', string='Appointments')
+    
+    
     @api.depends('appointment_ids')
     def _compute_appointment_count(self):
-        for rec in self:
-            rec.appointment_count = self.env['hospital.appointment'].search_count([('patient_id', '=', rec.id)])
+        appointment_group = self.env['hospital.appointment'].read_group(domain=['state', '=', 'done'], fields=['patient_id'], 
+        groupby=['patient_id'])
+        for appointment in appointment_group:
+            patient_id = appointment.get('patient.id')[0]
+            patient_rec = self.browse(patient_id)
+            patient_rec.appointment_count = appointment['patient_id_count']
+            self -= patient_rec
+        self.appointment_count = 0
     
-    
+    def action_view_appointments(self):
+        return {
+            'name': _('Appointments'),
+            'res_model': 'hospital.appointment',
+            'view_mode': 'list,form,calendar,activity',
+            'context': {'default_patient_id': self.id},
+            'domain': [('patient_id', '=', self.id)],
+            'target': 'current',
+            'type': 'ir.actions.act_window'
+        }
+
+    # @api.depends('appointment_ids')
+    # def _compute_appointment_count(self):
+    #     for rec in self:
+    #         rec.appointment_count = self.env['hospital.appointment'].search_count([('patient_id', '=', rec.id)])
+ 
+
     @api.constrains('date_of_birth')
     def _check_date_of_birth(self):
         for rec in self:
@@ -82,3 +108,13 @@ class HospitalPatient(models.Model):
     def action_test(self):
         print("test")
         return
+
+    @api.depends('date_of_birth')
+    def _compute_is_birthday(self):
+        for rec in self:
+            is_birthday = False
+            if rec.date_of_birth:
+                today = date.today()
+                if today.day == rec.date_of_birth.day and today.month == rec.date_of_birth.month:
+                    is_birthday = True
+                rec.is_birthday = is_birthday
