@@ -10,7 +10,7 @@
                     <field name="name" string="Patient Name"/>
                     <field name="ref"/>
                     <field name="age" avg="Average Age"/>
-                    <field name="gender"/>
+                    <field name="gender" decoration-it="1" decoration-bf="1" decoration-success="gender=='female'"/>
                     <field name="appointment_count" sum="Total Appointment"/>
                     <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
                 </tree>

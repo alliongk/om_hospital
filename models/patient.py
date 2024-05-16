@@ -32,14 +32,12 @@ class HospitalPatient(models.Model):
     
     @api.depends('appointment_ids')
     def _compute_appointment_count(self):
-        appointment_group = self.env['hospital.appointment'].read_group(domain=['state', '=', 'done'], fields=['patient_id'], 
+        appointment_group = self.env['hospital.appointment'].read_group(domain=[], fields=['patient_id'], 
         groupby=['patient_id'])
         for appointment in appointment_group:
-            patient_id = appointment.get('patient.id')[0]
+            patient_id = appointment.get('patient_id')[0]
             patient_rec = self.browse(patient_id)
             patient_rec.appointment_count = appointment['patient_id_count']
-            self -= patient_rec
-        self.appointment_count = 0
     
     def action_view_appointments(self):
         return {
